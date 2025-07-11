@@ -87,5 +87,6 @@
 		<module>nurse_88081</module>
 		<module>admin_8088</module>
 		<module>customer_8080</module>
+		<module>gateway</module>
 	</modules>
 </project>
