@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper SYSTEM "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.neu.SP01.dao.NursingServiceDao">
+
+    <select id="findNursingServiceByCustomerId" resultType="com.neu.SP01.po.NursingServiceDailyDTO">
+        SELECT
+            ns.nursing_service_id,
+            ns.customer_id,
+            np.NAME,
+            ns.amount,
+            CASE
+                WHEN ns.amount >= 0 THEN '数量正常'
+                ELSE '欠费'
+                END AS state,
+            CASE
+                WHEN ns.end_time &lt; CURRENT_TIMESTAMP THEN '到期'
+                ELSE '未到期'
+                END AS time_status,
+            ns.end_time,
+            np.description
+        FROM
+            t_nursing_service ns
+                JOIN t_nursing_project np ON ns.nursing_project_id = np.nursing_project_id
+        WHERE
+            ns.customer_id = #{customerId} and ns.state!=0
+    </select>
+    <select id="findNursingServiceByName" resultType="com.neu.SP01.po.NursingServiceDailyDTO">
+        SELECT
+            ns.nursing_service_id,
+            ns.customer_id,
+            np.NAME,
+            ns.amount,
+            CASE
+                WHEN ns.amount >= 0 THEN '数量正常'
+                ELSE '欠费'
+                END AS state,
+            CASE
+                WHEN ns.end_time &lt; CURRENT_TIMESTAMP THEN '到期'
+                ELSE '未到期'
+                END AS time_status,
+            ns.end_time,
+            np.description
+        FROM
+            t_nursing_service ns
+                JOIN t_nursing_project np ON ns.nursing_project_id = np.nursing_project_id
+        WHERE customer_id=#{customerId} and np.name like concat('%',#{name},'%') and ns.state!=0
+    </select>
+</mapper>
