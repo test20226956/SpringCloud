@@ -77,7 +77,32 @@
 				<version>3.0.4</version>
 
 			</dependency>
+			<!--fastJSON-->
+			<dependency>
+				<groupId>com.alibaba</groupId>
+				<artifactId>fastjson</artifactId>
+				<version>1.2.76</version>
+			</dependency>
+			<!--JWT令牌-->
+			<dependency>
+				<groupId>com.auth0</groupId>
+				<artifactId>java-jwt</artifactId>
+				<version>3.4.0</version>
+			</dependency>
+			<!--        分页依赖配置-->
+			<dependency>
+				<groupId>com.github.pagehelper</groupId>
+				<artifactId>pagehelper-spring-boot-starter</artifactId>
+				<version>2.1.0</version>
+			</dependency>
+			<dependency>
+				<groupId>com.baomidou</groupId>
 
+				<artifactId>mybatis-plus-boot-starter</artifactId>
+
+				<version>3.5.6</version>
+
+			</dependency>
 		</dependencies>
 
 	</dependencyManagement>
