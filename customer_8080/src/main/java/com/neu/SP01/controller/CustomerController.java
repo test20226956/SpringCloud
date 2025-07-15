@@ -29,12 +29,11 @@ public class CustomerController {
 	
 	@Autowired  // 确保正确注入
     private CustomerService cs;
-	@Autowired  // 确保正确注入
    
 	
 	// 搜索所有自理老人(分页)
     @GetMapping("/showSelfCust")
-    public PageResponseBean<?> showSelfCust(@RequestParam(defaultValue = "1") long pageNum,@RequestParam(defaultValue = "10")long pageSize){
+    public PageResponseBean<?> showSelfCust(@RequestParam(name = "pageNum",defaultValue = "1") long pageNum,@RequestParam(name = "pageSize",defaultValue = "10")long pageSize){
     	return cs.getSelfCareCustomersByPage(pageNum, pageSize);
     }
     
