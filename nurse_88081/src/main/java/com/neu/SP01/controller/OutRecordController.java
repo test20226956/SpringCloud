@@ -1,0 +1,69 @@
+package com.neu.SP01.controller;
+import com.neu.SP01.po.*;
+import com.neu.SP01.service.CustomerService;
+import com.neu.SP01.service.OutRecordService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@CrossOrigin("*")
+@RequestMapping("/GoOutController")
+@RestController
+public class OutRecordController {
+    @Autowired
+    OutRecordService ors;
+    @Autowired
+    private CustomerService cs;
+
+    //客户管理模块显示老人信息（其实是增加了身份证号，入住时间以及到期时间这三项内容）
+    @GetMapping("/showCust")
+    public PageResponseBean<List<CustNursingManageDTO>> showCust(@RequestParam(name = "pageNum",defaultValue = "1")Integer pageNum,
+                                                                 @RequestParam(name = "pageSize",defaultValue = "4")Integer pageSize,@RequestParam("userId") Integer userId){
+        PageResponseBean<List<CustNursingManageDTO>> userCustManage = cs.findUserCustManage(pageNum, pageSize, userId);
+        return userCustManage;
+    }
+
+    @PostMapping("/addGoOutRe")//护工添加老人的外出申请
+    public ResponseBean<Integer> addGoOutRe(@RequestBody OutRecord outRecord){
+        if(ors.addOutRecord(outRecord)){
+            return new ResponseBean<>(null);
+        }else{
+            return new ResponseBean<>(500,"添加失败");
+        }
+    }
+
+    @GetMapping("/searchCust")//客户管理模块根据老人姓名模糊搜索
+    public PageResponseBean<List<CustNursingManageDTO>> searchCust(@RequestParam(name = "pageNum",defaultValue = "1")Integer pageNum,
+                                                                   @RequestParam(name = "pageSize",defaultValue = "4")Integer pageSize, @RequestParam("userId")Integer userId,@RequestParam("name")String name){
+        PageResponseBean<List<CustNursingManageDTO>> userCustManageByName = cs.findUserCustManageByName(pageNum, pageSize, userId, name);
+        return userCustManageByName;
+    }
+
+    @GetMapping("/showCustGoOutRe")//展示老人的外出申请
+    public PageResponseBean<List<CustOutRecordDTO>> showCustGoOutRe(@RequestParam(name = "pageNum",defaultValue = "1")Integer pageNum,
+                                                                    @RequestParam(name = "pageSize",defaultValue = "4")Integer pageSize, @RequestParam("customerId")Integer customerId){
+        PageResponseBean<List<CustOutRecordDTO>> outRecordByCustomerId = ors.findOutRecordByCustomerId(pageNum, pageSize, customerId);
+        return outRecordByCustomerId;
+    }
+
+    @PostMapping("/custGoOutCome")//给老人添加回院时间
+    public ResponseBean<Integer> custGoOutCome(@RequestParam("outRecordId")Integer outRecordId){
+        int result = ors.AddActualReturnTime(outRecordId);
+        if(result == -1){
+            return new ResponseBean<>(500,"外出审批未通过，不可添加回院时间");
+        }else if(result == 0){
+            return new ResponseBean<>(500,"已有实际回院时间，不可添加");
+        }else {
+            return new ResponseBean<>(200,"添加成功");
+        }
+    }
+
+    @GetMapping("/searchCustGoOutRe")//根据外出时间搜索外出申请
+    public PageResponseBean<List<CustOutRecordDTO>> searchCustGoOutRe(@RequestParam(name = "pageNum",defaultValue = "1")Integer pageNum,
+                                                                      @RequestParam(name = "pageSize",defaultValue = "4")Integer pageSize, @RequestParam("customerId")Integer customerId,@RequestParam("outTime")String outTime){
+        PageResponseBean<List<CustOutRecordDTO>> outRecordByTime = ors.findOutRecordByTime(pageNum, pageSize, customerId, outTime);
+        return outRecordByTime;
+
+    }
+}

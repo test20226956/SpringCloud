@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper SYSTEM "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.neu.SP01.dao.CheckOutRecordDao">
+    <select id="findCheckOutRecordByCustomerId" resultType="com.neu.SP01.po.CustCheckOutDTO">
+        SELECT
+            cor.check_out_record_id,
+            c.NAME,
+            cor.apply_time,
+            CASE
+                cor.type
+                WHEN 0 THEN
+                    '正常退住'
+                WHEN 1 THEN
+                    '死亡退住'
+                WHEN 2 THEN
+                    '保留床位'
+                END AS type,
+            cor.reason,
+            u.user_name check_name,
+            cor.examine_time,
+            CASE
+                cor.state
+                WHEN 0 THEN
+                    '已提交'
+                WHEN 1 THEN
+                    '通过'
+                WHEN 2 THEN
+                    '未通过'
+                END AS state
+        FROM
+            t_check_out_record cor
+                JOIN t_customer c ON c.customer_id = cor.customer_id
+                LEFT JOIN t_user u ON u.user_id = cor.admin_id
+        WHERE
+            c.customer_id = #{customerId}
+    </select>
+</mapper>

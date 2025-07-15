@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper SYSTEM "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.neu.SP01.dao.CustomerDao">
+    <select id="findCustByTel" resultType="com.neu.SP01.po.CustNursingManageDTO">
+        SELECT
+            c.customer_id,
+            c.name,
+            YEAR(CURDATE()) - SUBSTRING(c.identity, 7, 4) AS age,
+            CASE c.gender WHEN 0 THEN '男' WHEN 1 THEN '女' ELSE '未知' END AS gender,
+            c.identity,
+            c.blood_type ,
+            r.floor ,
+            r.room_number ,
+            f.name AS fName,
+            f.tel,
+            nl.name nursing_level_id,
+            b.bed_number,
+            cir.check_in_time,
+            cir.end_time,
+            c.image
+FROM
+    t_customer c
+JOIN
+    t_check_in_record cir ON c.customer_id = cir.customer_id AND cir.state = 1
+LEFT JOIN
+    t_nursing_level nl ON nl.nursing_level_id = cir.nursing_level_id
+JOIN
+    t_bed_record br ON cir.check_in_record_id = br.check_in_record_id AND br.state = 1
+JOIN
+    t_bed b ON br.bed_id = b.bed_id
+JOIN
+    t_room r ON b.room_id = r.room_id
+LEFT JOIN
+    t_family f ON c.customer_id = f.customer_id and f.state=1
+where c.tel=#{tel}
+    </select>
+<!--    //根据customerId查找老人详细信息-->
+    <select id="findCustById" resultType="com.neu.SP01.po.ClientCustDTO">
+        SELECT
+            c.customer_id,
+            c.NAME,
+            CONCAT( r.building_number, '栋-', r.floor, '层-', r.room_number, '-', b.bed_number, '床' ) AS address,
+            nl.name nursing_level,
+            cir.check_in_time,
+            cir.end_time,
+            u.user_name,
+            c.tel,
+            c.image
+        FROM
+            t_customer c
+        JOIN t_check_in_record cir ON c.customer_id = cir.customer_id
+        AND cir.state = 1
+        LEFT JOIN t_nursing_level nl ON nl.nursing_level_id = cir.nursing_level_id
+        LEFT JOIN t_user u ON u.user_id = cir.user_id
+        JOIN t_bed_record br ON cir.check_in_record_id = br.check_in_record_id
+        AND br.state = 1
+        JOIN t_bed b ON br.bed_id = b.bed_id
+        JOIN t_room r ON b.room_id = r.room_id
+        LEFT JOIN t_family f ON c.customer_id = f.customer_id
+        WHERE
+            c.customer_id = #{customerId}
+    </select>
+
+</mapper>
