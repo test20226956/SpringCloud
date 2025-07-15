@@ -32,6 +32,12 @@
         <artifactId> spring-cloud-starter-alibaba-nacos-discovery </artifactId>
 
 </dependency>
+	  <!--阿里云oss依赖-->
+	  <dependency>
+		  <groupId>com.aliyun.oss</groupId>
+		  <artifactId>aliyun-sdk-oss</artifactId>
+		  <version>3.17.4</version>
+	  </dependency>
 	  <!--		springboot整合 redis的依赖-->
 	  <dependency>
 		  <groupId>org.springframework.boot</groupId>
@@ -56,5 +62,9 @@
 		  <groupId>com.baomidou</groupId>
 		  <artifactId>mybatis-plus-boot-starter</artifactId>
 	  </dependency>
-	</dependencies>
+	  <dependency>
+		  <groupId>org.projectlombok</groupId>
+		  <artifactId>lombok</artifactId>
+	  </dependency>
+  </dependencies>
 </project>

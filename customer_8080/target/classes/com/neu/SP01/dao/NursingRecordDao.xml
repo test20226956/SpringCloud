@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper SYSTEM "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.neu.SP01.dao.NursingRecordDao">
+    <!--    客户端->展示老人相应护理项目下的护理记录-->
+    <select id="findByNursingServiceId" resultType="com.neu.SP01.po.CustNursingRecordDTO">
+        SELECT
+            nr.nursing_record_id,
+            np.NAME,
+            nr.time,
+            nr.count,
+            u.user_name
+        FROM
+            t_nursing_record nr
+                JOIN t_nursing_service ns ON nr.nursing_service_id = ns.nursing_service_id
+                JOIN t_nursing_project np ON ns.nursing_project_id = np.nursing_project_id
+                JOIN t_user u ON u.user_id = nr.user_id
+        WHERE
+            nr.state = 1
+          AND nr.nursing_service_id = #{nursingServiceId}
+    </select>
+</mapper>
