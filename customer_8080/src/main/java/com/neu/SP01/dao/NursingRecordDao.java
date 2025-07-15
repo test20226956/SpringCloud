@@ -142,5 +142,5 @@ public interface NursingRecordDao {
            @Param("nursingLevelId") Integer nursingLevelId);
 
     //客户端->展示老人相应护理项目下的护理记录
-    List<CustNursingRecordDTO> findByNursingServiceId(Integer nursingServiceId);
+    List<CustNursingRecordDTO> findByNursingServiceId(@Param("nursingServiceId")Integer nursingServiceId);
 }

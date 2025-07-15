@@ -76,7 +76,7 @@ public class NursingServiceController {
 
     /*========================客户端护理查看=======================*/
     @GetMapping("/clientShowCustRec")//展示老人对应护理项目下的护理记录
-    public ResponseBean<List<CustNursingRecordDTO>> clientShowCustRec(Integer nursingServiceId){
+    public ResponseBean<List<CustNursingRecordDTO>> clientShowCustRec(@RequestParam("nursingServiceId")Integer nursingServiceId){
         List<CustNursingRecordDTO> byNursingServiceId = nrs.findByNursingServiceId(nursingServiceId);
         if(byNursingServiceId.isEmpty()){
             return new ResponseBean<>(500,"该护理服务暂无护理项目");

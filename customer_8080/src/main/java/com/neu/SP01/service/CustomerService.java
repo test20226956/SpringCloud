@@ -5,10 +5,16 @@ import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.neu.SP01.po.*;
+import com.neu.SP01.util.JwtUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,16 +23,6 @@ import com.github.pagehelper.PageHelper;
 import com.neu.SP01.dao.BedRecordDao;
 import com.neu.SP01.dao.CheckInRecordDao;
 import com.neu.SP01.dao.CustomerDao;
-import com.neu.SP01.po.BedRecord;
-import com.neu.SP01.po.CheckInRecord;
-import com.neu.SP01.po.CustCheckInDTO;
-import com.neu.SP01.po.CustCheckInNurseDTO;
-import com.neu.SP01.po.CustDailyNursingDTO;
-import com.neu.SP01.po.CustNursingManageDTO;
-import com.neu.SP01.po.Customer;
-import com.neu.SP01.po.CustomerWithCall;
-import com.neu.SP01.po.PageResponseBean;
-import com.neu.SP01.po.ResponseBean;
 
 @Service
 @Transactional(rollbackFor = Exception.class) // 添加此注解
@@ -508,5 +504,44 @@ public class CustomerService {
 			response.setTotal(p.getTotal()); // 总记录数
 		}
 		return response;
+	}
+	@Autowired
+	RedisTemplate redisTemplate;
+	//客户端老人登录
+	public ResponseBean<Customer> login(String tel, String password) throws JsonProcessingException {
+		// 1. 验证账号是否存在
+		CustNursingManageDTO custByTel = cd.findCustByTel(tel);
+		if (custByTel == null) {
+			return new ResponseBean<>(500, "手机号不存在");
+		}
+
+		// 2. 验证密码是否正确
+		String pwd = cd.findPwdByCustomerId(custByTel.getCustomerId());
+		if (!pwd.equals(password)) {
+			return new ResponseBean<>(500, "密码错误");
+		}
+
+		// 3. 登录成功，返回用户信息
+		ObjectMapper objectMapper = new ObjectMapper();
+		String s = objectMapper.writeValueAsString(custByTel);
+		String jwt = JwtUtils.createToken(s);//jwt包含了当前登录的用户信息
+		redisTemplate.opsForValue().set(custByTel.getCustomerId().toString(),jwt,20, TimeUnit.MINUTES);
+		return new ResponseBeanJWT(200, "登录成功",custByTel,jwt);
+	}
+
+	//客户端显示老人详细信息
+	public ResponseBean<ClientCustDTO> findCustById(Integer customerId){
+		ClientCustDTO custById = cd.findCustById(customerId);
+		return new ResponseBean<>(200,"查询成功",custById);
+	}
+	//修改老人头像
+	public boolean updateImageById(Integer customerId,String image){
+		cd.updateImageById(customerId,image);
+		return true;
+	}
+	//修改老人手机号
+	public boolean updateTelById(Integer customerId,String tel){
+		cd.updateTelById(customerId,tel);
+		return true;
 	}
 }

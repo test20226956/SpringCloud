@@ -3,6 +3,8 @@ package com.neu.SP01.controller;
 import java.util.List;
 import java.util.Map;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.neu.SP01.po.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,14 +13,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import com.neu.SP01.po.CustCheckInDTO;
-import com.neu.SP01.po.CustCheckInNurseDTO;
-import com.neu.SP01.po.Customer;
-import com.neu.SP01.po.CustomerWithCall;
-import com.neu.SP01.po.EditCustRequest;
-import com.neu.SP01.po.PageResponseBean;
-import com.neu.SP01.po.ResponseBean;
 
 import com.neu.SP01.service.CustomerService;
 
@@ -125,5 +119,33 @@ public class CustomerController {
     @GetMapping("/listCall")
     public ResponseBean<Map<String, Object>> listCall(@RequestParam Integer userId){
         return cs.listCall(userId);
+    }
+
+    @PostMapping("/login")//客户端老人登录
+    public ResponseBean<Customer> login(@RequestParam("tel")String tel, @RequestParam("password")String password) throws JsonProcessingException {
+        ResponseBean<Customer> login = cs.login(tel, password);
+        return login;
+    }
+
+    @GetMapping("/clientShowCust")//客户端展示老人详细信息
+    public ResponseBean<ClientCustDTO> clientShowCust(@RequestParam("customerId")Integer customerId){
+        ResponseBean<ClientCustDTO> custById = cs.findCustById(customerId);
+        return custById;
+    }
+    @PostMapping("/editCustImage")//客户端修改老人头像
+    public ResponseBean editCustImage(@RequestParam("customerId")Integer customerId,@RequestParam("image")String image){
+        if(cs.updateImageById(customerId,image)){
+            return new ResponseBean<>(200,"修改成功");
+        }else {
+            return new ResponseBean<>(500,"修改失败");
+        }
+    }
+    @PostMapping("/editCustTel")//修改老人手机号
+    public ResponseBean editCust(@RequestParam("customerId")Integer customerId,@RequestParam("tel")String tel){
+        if (cs.updateTelById(customerId, tel)) {
+            return new ResponseBean<>(200,"修改成功");
+        }else {
+            return new ResponseBean<>(500,"修改失败");
+        }
     }
 }

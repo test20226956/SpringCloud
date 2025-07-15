@@ -154,7 +154,7 @@ public class UserController {
 
     /*========================客户端护理查看=======================*/
     @GetMapping("/clientShowCustPro")//展示老人购买的所有护理服务
-    public ResponseBean<List<NursingServiceDailyDTO>> clientShowCustPro(Integer customerId){
+    public ResponseBean<List<NursingServiceDailyDTO>> clientShowCustPro(@RequestParam("customerId")Integer customerId){
         List<NursingServiceDailyDTO> service = nss.findNursingServiceByCustomerIdOnClient(customerId);
         if(service.isEmpty()){
             return new ResponseBean<>(500,"您暂无已购买的护理服务");
@@ -163,7 +163,7 @@ public class UserController {
         }
     }
     @GetMapping("/clientSearchCustPro")//按名字搜索老人购买的所有护理服务
-    public ResponseBean<List<NursingServiceDailyDTO>> searchCustPro(Integer customerId,String name){
+    public ResponseBean<List<NursingServiceDailyDTO>> searchCustPro(@RequestParam("customerId")Integer customerId,@RequestParam("name")String name){
         List<NursingServiceDailyDTO> service = nss.findNursingServiceByNameOnClient(customerId, name);
         if(service.isEmpty()){
             return new ResponseBean<>(500,"无符合条件的数据");

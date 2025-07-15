@@ -2,6 +2,7 @@ package com.neu.SP01.dao;
 
 import java.util.List;
 
+import com.neu.SP01.po.*;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Options;
@@ -10,13 +11,6 @@ import org.apache.ibatis.annotations.Result;
 import org.apache.ibatis.annotations.Results;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
-
-import com.neu.SP01.po.CustCheckInDTO;
-import com.neu.SP01.po.CustCheckInNurseDTO;
-import com.neu.SP01.po.CustDailyNursingDTO;
-import com.neu.SP01.po.CustNursingManageDTO;
-import com.neu.SP01.po.Customer;
-import com.neu.SP01.po.CustomerWithCall;
 
 @Mapper
 public interface CustomerDao {
@@ -875,5 +869,18 @@ public interface CustomerDao {
 	//客户管理模块根据老人姓名模糊搜索（其实是增加了身份证号，入住时间以及到期时间这三项内容）
 	List<CustNursingManageDTO> findUserCustManageByName(Integer userId,String name);
 
-
+	/*===================客户端->我的=====================*/
+	//客户登录
+	CustNursingManageDTO findCustByTel(@Param("tel")String tel);
+	//根据customerId查找老人对应的密码
+	@Select("select password from yyzx_st.t_customer where customer_id=#{customerId}")
+	String findPwdByCustomerId(@Param("customerId")Integer customerId);
+	//根据customerId查找老人详细信息
+	ClientCustDTO findCustById(@Param("customerId")Integer customerId);
+	//修改老人的头像
+	@Update("update yyzx_st.t_customer set image=#{image} where customer_id=#{customerId}")
+	void updateImageById(@Param("customerId")Integer customerId,@Param("image")String image);
+	//修改老人的手机号
+	@Update("update yyzx_st.t_customer set tel=#{tel} where customer_id=#{customerId}")
+	void updateTelById(@Param("customerId")Integer customerId,@Param("tel")String tel);
 }

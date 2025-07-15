@@ -137,7 +137,7 @@ public interface NursingServiceDao {
     List<NursingServiceDailyDTO> findNursingServiceByCustomerId(Integer customerId);
 
     //按项目名字搜索用户的持有的护理服务
-    List<NursingServiceDailyDTO> findNursingServiceByName(Integer customerId,String name);
+    List<NursingServiceDailyDTO> findNursingServiceByName(@Param("customerId")Integer customerId,@Param("name")String name);
     //对应原型护工 日常护理 添加用户护理记录，相应的对应护理服务的数量也应该减少
     @Update("UPDATE yyzx_st.t_nursing_service SET amount = amount - #{count} WHERE nursing_service_id = #{nursingServiceId}")
     void updateNursingServiceAmount(Integer count,Integer nursingServiceId);
